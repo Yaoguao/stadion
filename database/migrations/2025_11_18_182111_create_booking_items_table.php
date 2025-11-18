@@ -12,23 +12,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('booking_items', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
             $table->uuid('booking_id');
-            $table->string('provider', 50)->nullable();
-            $table->decimal('amount', 10, 2);
-            $table->string('status', 20)->default('pending');
-            $table->string('transaction_id', 200)->unique()->nullable();
-            $table->jsonb('provider_data')->nullable();
+            $table->uuid('seat_instance_id');
+            $table->decimal('price', 10, 2);
+            $table->decimal('fee', 10, 2)->default(0);
             $table->timestampTz('created_at')->default(DB::raw('now()'));
-            $table->string('idempotency_key', 255)->nullable();
             
             $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
-        });
-
-        Schema::table('payments', function (Blueprint $table) {
-            $table->index('booking_id', 'idx_payments_booking');
-            $table->index('status', 'idx_payments_status');
+            $table->foreign('seat_instance_id')->references('id')->on('seat_instances')->onDelete('restrict');
+            $table->unique(['booking_id', 'seat_instance_id']);
+            $table->index('booking_id');
         });
     }
 
@@ -37,7 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('booking_items');
     }
 };
-

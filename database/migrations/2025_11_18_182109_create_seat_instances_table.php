@@ -25,11 +25,6 @@ return new class extends Migration
             $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->foreign('seat_id')->references('id')->on('seats')->onDelete('restrict');
             $table->unique(['event_id', 'seat_id']);
-            
-            $table->check('price >= 0');
-        });
-
-        Schema::table('seat_instances', function (Blueprint $table) {
             $table->index('event_id', 'idx_seat_instances_event');
             $table->index('status', 'idx_seat_instances_status');
         });
@@ -43,4 +38,3 @@ return new class extends Migration
         Schema::dropIfExists('seat_instances');
     }
 };
-

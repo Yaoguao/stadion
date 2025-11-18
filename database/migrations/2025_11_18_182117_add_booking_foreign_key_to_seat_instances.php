@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::table('seat_instances', function (Blueprint $table) {
             $table->foreign('reserved_by_booking_id')
-                ->references('id')
-                ->on('bookings')
-                ->onDelete('set null');
+                  ->references('id')
+                  ->on('bookings')
+                  ->onDelete('set null');
         });
     }
 
@@ -29,4 +29,3 @@ return new class extends Migration
         });
     }
 };
-

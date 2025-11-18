@@ -12,16 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('venues', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
-            $table->string('name', 50)->unique();
-            $table->string('display_name', 100);
-            $table->text('description')->nullable();
+            $table->string('name', 200);
+            $table->text('address')->nullable();
+            $table->string('city', 100)->nullable();
+            $table->string('timezone', 50)->default('UTC');
+            $table->jsonb('seat_map')->nullable();
             $table->timestampTz('created_at')->default(DB::raw('now()'));
-        });
-
-        Schema::table('roles', function (Blueprint $table) {
-            $table->index('name', 'idx_roles_name');
         });
     }
 
@@ -30,7 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('venues');
     }
 };
-

@@ -21,26 +21,9 @@ return new class extends Migration
             $table->timestampTz('created_at')->default(DB::raw('now()'));
             $table->timestampTz('updated_at')->default(DB::raw('now()'));
             $table->timestampTz('deleted_at')->nullable();
-        });
-
-        Schema::table('users', function (Blueprint $table) {
+            
             $table->index('email', 'idx_users_email');
             $table->index('created_at', 'idx_users_created_at');
-        });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->uuid('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
         });
     }
 
@@ -50,7 +33,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
     }
 };

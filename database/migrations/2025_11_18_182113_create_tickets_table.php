@@ -22,11 +22,7 @@ return new class extends Migration
             $table->string('seat_label', 100)->nullable();
             
             $table->foreign('booking_item_id')->references('id')->on('booking_items')->onDelete('cascade');
-        });
-
-        Schema::table('tickets', function (Blueprint $table) {
             $table->index('validated', 'idx_tickets_validated');
-            $table->index('qr_code', 'uniq_qr');
         });
     }
 
@@ -38,4 +34,3 @@ return new class extends Migration
         Schema::dropIfExists('tickets');
     }
 };
-

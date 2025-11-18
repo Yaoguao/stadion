@@ -12,15 +12,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('refunds', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
-            $table->uuid('payment_id');
+            $table->uuid('booking_id');
+            $table->string('provider', 50)->nullable();
             $table->decimal('amount', 10, 2);
             $table->string('status', 20)->default('pending');
+            $table->string('transaction_id', 200)->unique()->nullable();
+            $table->jsonb('provider_data')->nullable();
             $table->timestampTz('created_at')->default(DB::raw('now()'));
-            $table->timestampTz('processed_at')->nullable();
+            $table->string('idempotency_key', 255)->nullable();
             
-            $table->foreign('payment_id')->references('id')->on('payments');
+            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->index('booking_id', 'idx_payments_booking');
+            $table->index('status', 'idx_payments_status');
         });
     }
 
@@ -29,7 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('refunds');
+        Schema::dropIfExists('payments');
     }
 };
-

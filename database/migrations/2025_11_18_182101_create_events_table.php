@@ -25,9 +25,6 @@ return new class extends Migration
             $table->timestampTz('updated_at')->default(DB::raw('now()'));
             
             $table->foreign('venue_id')->references('id')->on('venues')->onDelete('restrict');
-        });
-
-        Schema::table('events', function (Blueprint $table) {
             $table->index('start_at');
             $table->index('venue_id');
         });
@@ -41,4 +38,3 @@ return new class extends Migration
         Schema::dropIfExists('events');
     }
 };
-

@@ -15,21 +15,21 @@ return new class extends Migration
         Schema::create('seats', function (Blueprint $table) {
             $table->uuid('id')->primary()->default(DB::raw('gen_random_uuid()'));
             $table->uuid('venue_id');
-            $table->string('sector', 20);
+            $table->string('sector', 20)->nullable();
             $table->string('zone', 50)->nullable();
-            $table->integer('row_num');
-            $table->integer('seat_number');
+            $table->integer('row_num')->nullable();
+            $table->integer('seat_number')->nullable();
             $table->decimal('base_price', 10, 2);
             $table->smallInteger('view_rating')->nullable();
             $table->boolean('is_wheelchair')->default(false);
             $table->timestampTz('created_at')->default(DB::raw('now()'));
             
             $table->foreign('venue_id')->references('id')->on('venues')->onDelete('cascade');
-            $table->unique(['venue_id', 'sector', 'row_num', 'seat_number']);
-            
-            $table->check('base_price >= 0');
-            $table->check('view_rating IS NULL OR (view_rating >= 1 AND view_rating <= 5)');
+            $table->unique(['venue_id', 'sector', 'row_num', 'seat_number'], 'seats_venue_sector_row_seat_unique');
         });
+        
+        DB::statement('ALTER TABLE seats ADD CONSTRAINT seats_base_price_check CHECK (base_price >= 0)');
+        DB::statement('ALTER TABLE seats ADD CONSTRAINT seats_view_rating_check CHECK (view_rating IS NULL OR (view_rating BETWEEN 1 AND 5))');
     }
 
     /**
@@ -37,7 +37,8 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::statement('ALTER TABLE seats DROP CONSTRAINT IF EXISTS seats_view_rating_check');
+        DB::statement('ALTER TABLE seats DROP CONSTRAINT IF EXISTS seats_base_price_check');
         Schema::dropIfExists('seats');
     }
 };
-

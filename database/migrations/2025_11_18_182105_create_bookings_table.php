@@ -26,9 +26,6 @@ return new class extends Migration
             
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('event_id')->references('id')->on('events');
-        });
-
-        Schema::table('bookings', function (Blueprint $table) {
             $table->index('user_id');
             $table->index(['event_id', 'status']);
             $table->index('created_at');
@@ -43,4 +40,3 @@ return new class extends Migration
         Schema::dropIfExists('bookings');
     }
 };
-
