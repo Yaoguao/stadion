@@ -1,10 +1,11 @@
 <?php
 
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Home;
 use Illuminate\Support\Facades\Route;
 
-// Главная страница - админ панель
-Route::get('/', Dashboard::class)->name('admin.dashboard');
+// Главная страница - публичная
+Route::get('/', Home::class)->name('home');
 
 // Админ панель роуты
 Route::prefix('admin')->name('admin.')->group(function () {
