@@ -164,5 +164,15 @@ class BookingRepository extends BaseRepository implements BookingRepositoryInter
     {
         return $this->model->with($relations)->find($id);
     }
+
+    /**
+     * Paginate records with relations.
+     */
+    public function paginate(int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
+    {
+        return $this->model->with(['user', 'event', 'payment'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, $columns);
+    }
 }
 

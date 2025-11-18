@@ -102,10 +102,23 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
      */
     public function search(string $query, int $perPage = 15): LengthAwarePaginator
     {
-        return $this->model->where(function ($q) use ($query) {
-            $q->where('full_name', 'ilike', "%{$query}%")
-              ->orWhere('email', 'ilike', "%{$query}%");
-        })->paginate($perPage);
+        return $this->model->with(['roles', 'bookings'])
+            ->withCount('bookings')
+            ->where(function ($q) use ($query) {
+                $q->where('full_name', 'ilike', "%{$query}%")
+                  ->orWhere('email', 'ilike', "%{$query}%");
+            })
+            ->paginate($perPage);
+    }
+
+    /**
+     * Paginate records with relations.
+     */
+    public function paginate(int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
+    {
+        return $this->model->with(['roles', 'bookings'])
+            ->withCount('bookings')
+            ->paginate($perPage, $columns);
     }
 
     /**

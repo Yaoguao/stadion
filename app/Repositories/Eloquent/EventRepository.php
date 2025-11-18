@@ -66,10 +66,25 @@ class EventRepository extends BaseRepository implements EventRepositoryInterface
      */
     public function search(string $query, int $perPage = 15): LengthAwarePaginator
     {
-        return $this->model->where(function ($q) use ($query) {
-            $q->where('title', 'ilike', "%{$query}%")
-              ->orWhere('description', 'ilike', "%{$query}%");
-        })->orderBy('start_at')->paginate($perPage);
+        return $this->model->with(['venue'])
+            ->withCount('bookings')
+            ->where(function ($q) use ($query) {
+                $q->where('title', 'ilike', "%{$query}%")
+                  ->orWhere('description', 'ilike', "%{$query}%");
+            })
+            ->orderBy('start_at')
+            ->paginate($perPage);
+    }
+
+    /**
+     * Paginate records with relations.
+     */
+    public function paginate(int $perPage = 15, array $columns = ['*']): LengthAwarePaginator
+    {
+        return $this->model->with(['venue'])
+            ->withCount('bookings')
+            ->orderBy('start_at', 'desc')
+            ->paginate($perPage, $columns);
     }
 
     /**

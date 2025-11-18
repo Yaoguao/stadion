@@ -91,5 +91,15 @@ class PaymentRepository extends BaseRepository implements PaymentRepositoryInter
     {
         return $this->update($paymentId, ['status' => Payment::STATUS_REFUNDED]);
     }
+
+    /**
+     * Paginate records with relations.
+     */
+    public function paginate(int $perPage = 15, array $columns = ['*']): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->model->with(['booking.user', 'booking.event'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, $columns);
+    }
 }
 

@@ -40,7 +40,6 @@ class Role extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_roles', 'role_id', 'user_id')
-            ->withPivot('assigned_at')
-            ->withTimestamps();
+            ->withPivot('assigned_at');
     }
 }
