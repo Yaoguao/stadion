@@ -58,6 +58,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the password attribute (for Laravel Auth).
+     */
+    public function getPasswordAttribute()
+    {
+        return $this->password_hash;
+    }
+
+    /**
+     * Set the password attribute (for Laravel Auth).
+     */
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password_hash'] = \Hash::make($value);
+    }
+
+    /**
      * Get the roles that belong to the user.
      */
     public function roles(): BelongsToMany

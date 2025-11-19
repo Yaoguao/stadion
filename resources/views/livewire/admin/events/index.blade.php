@@ -136,6 +136,10 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex justify-end gap-2">
+                                        <a href="{{ route('admin.events.manage-seats', $event->id) }}" 
+                                           class="text-green-600 hover:text-green-900" title="Управление местами">
+                                            Места
+                                        </a>
                                         <button 
                                             wire:click="togglePublish('{{ $event->id }}', {{ $event->is_published ? 'true' : 'false' }})"
                                             class="text-{{ $event->is_published ? 'yellow' : 'green' }}-600 hover:text-{{ $event->is_published ? 'yellow' : 'green' }}-900">

@@ -27,9 +27,17 @@
                 </div>
                 <div class="flex items-center gap-4">
                     @auth
-                        <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                            Админ панель
+                        <a href="{{ route('profile') }}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                            Личный кабинет
                         </a>
+                        @if(auth()->user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="text-gray-700 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                                Админ панель
+                            </a>
+                        @endif
+                        <span class="text-gray-600 text-sm">
+                            {{ auth()->user()->full_name }}
+                        </span>
                         @if(Route::has('logout'))
                             <form method="POST" action="{{ route('logout') }}" class="inline">
                                 @csrf
@@ -39,15 +47,9 @@
                             </form>
                         @endif
                     @else
-                        @if(Route::has('login'))
-                            <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                Войти
-                            </a>
-                        @else
-                            <a href="/admin/dashboard" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                Войти
-                            </a>
-                        @endif
+                        <a href="{{ route('login') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Войти
+                        </a>
                     @endauth
                 </div>
             </div>
@@ -56,6 +58,20 @@
 
     <!-- Main Content -->
     <main>
+        @if(session('error'))
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('error') }}</span>
+                </div>
+            </div>
+        @endif
+        @if(session('success'))
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            </div>
+        @endif
         {{ $slot }}
     </main>
 
@@ -81,13 +97,12 @@
                     <ul class="space-y-2 text-sm">
                         <li><a href="/" class="text-gray-400 hover:text-white">Главная</a></li>
                         @auth
-                            <li><a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-white">Админ панель</a></li>
-                        @else
-                            @if(Route::has('login'))
-                                <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-white">Войти</a></li>
-                            @else
-                                <li><a href="/admin/dashboard" class="text-gray-400 hover:text-white">Войти</a></li>
+                            <li><a href="{{ route('profile') }}" class="text-gray-400 hover:text-white">Личный кабинет</a></li>
+                            @if(auth()->user()->isAdmin())
+                                <li><a href="{{ route('admin.dashboard') }}" class="text-gray-400 hover:text-white">Админ панель</a></li>
                             @endif
+                        @else
+                            <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-white">Войти</a></li>
                         @endauth
                     </ul>
                 </div>
