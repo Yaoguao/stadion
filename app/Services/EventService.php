@@ -39,7 +39,40 @@ class EventService
      */
     public function createEvent(array $data): Event
     {
-        return $this->eventRepository->create($data);
+        $event = $this->eventRepository->create($data);
+        
+        // Автоматически создаем экземпляры мест для события
+        $this->generateSeatInstances($event->id, $event->venue_id);
+        
+        return $event;
+    }
+
+    /**
+     * Generate seat instances for event from venue seats.
+     */
+    public function generateSeatInstances(string $eventId, string $venueId): int
+    {
+        $seats = \App\Models\Seat::where('venue_id', $venueId)->get();
+        $created = 0;
+
+        foreach ($seats as $seat) {
+            // Проверяем, не существует ли уже экземпляр для этого места и события
+            $exists = \App\Models\SeatInstance::where('event_id', $eventId)
+                ->where('seat_id', $seat->id)
+                ->exists();
+
+            if (!$exists) {
+                \App\Models\SeatInstance::create([
+                    'event_id' => $eventId,
+                    'seat_id' => $seat->id,
+                    'price' => $seat->base_price,
+                    'status' => \App\Models\SeatInstance::STATUS_AVAILABLE,
+                ]);
+                $created++;
+            }
+        }
+
+        return $created;
     }
 
     /**

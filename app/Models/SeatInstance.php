@@ -45,6 +45,7 @@ class SeatInstance extends Model
         return [
             'price' => 'decimal:2',
             'reserved_expires_at' => 'datetime',
+            'created_at' => 'datetime',
             'updated_at' => 'datetime',
         ];
     }

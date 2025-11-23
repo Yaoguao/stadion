@@ -169,7 +169,7 @@
                                         </div>
                                     @endif
                                 </div>
-                                <a href="#" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors mt-auto">
+                                <a href="{{ route('events.book', $event->id) }}" class="block w-full bg-red-600 hover:bg-red-700 text-white text-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors mt-auto">
                                     Выбрать места
                                 </a>
                             </div>
