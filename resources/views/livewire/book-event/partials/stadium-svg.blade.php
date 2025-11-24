@@ -1,6 +1,8 @@
 @php
     // Получаем список секторов из статистики
-    $sectors = $seatsBySectorGrouped->keys()->sort()->values();
+    $sectors = (isset($seatsBySectorGrouped) && $seatsBySectorGrouped) 
+        ? $seatsBySectorGrouped->keys()->sort()->values() 
+        : collect();
     
     // Распределяем секторы по трибунам
     $northSectors = [];

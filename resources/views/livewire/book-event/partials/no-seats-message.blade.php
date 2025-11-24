@@ -15,7 +15,7 @@
         </ul>
     </div>
     
-    @if($event->venue)
+    @if(isset($event) && $event && $event->venue)
         <p class="text-gray-400 text-sm mb-2">
             Место проведения: {{ $event->venue->name }}
         </p>

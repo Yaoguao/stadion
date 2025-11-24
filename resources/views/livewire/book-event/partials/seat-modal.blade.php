@@ -6,7 +6,8 @@
             <button
                 type="button"
                 wire:click="closeSeatModal"
-                class="text-gray-400 hover:text-gray-600 transition-colors"
+                wire:loading.attr="disabled"
+                class="text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
             >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -16,7 +17,7 @@
 
         <!-- Контент модального окна -->
         <div class="flex-1 overflow-y-auto p-6">
-            @if(isset($seatsBySector[$selectedSector]) && $seatsBySector[$selectedSector]->count() > 0)
+            @if(isset($seatsBySector[$selectedSector]) && (is_countable($seatsBySector[$selectedSector]) ? count($seatsBySector[$selectedSector]) : 0) > 0)
                 <div class="space-y-4">
                     @foreach($seatsBySector[$selectedSector] as $rowNum => $seats)
                         <div class="flex items-center gap-3">
@@ -51,15 +52,18 @@
                                                 type="button"
                                                 wire:click="toggleSeat('{{ $seatInstanceId }}')"
                                                 wire:loading.attr="disabled"
+                                                wire:target="toggleSeat('{{ $seatInstanceId }}')"
                                                 wire:key="modal-seat-{{ $seatInstanceId }}"
                                                 @class([
-                                                    'w-12 h-12 text-xs font-medium rounded border-2 transition-all hover:scale-110 flex items-center justify-center cursor-pointer',
+                                                    'w-12 h-12 text-xs font-medium rounded border-2 transition-all hover:scale-110 flex items-center justify-center cursor-pointer relative',
                                                     'bg-green-500 border-green-600 text-white hover:bg-green-600' => $status === 'available',
                                                     'bg-blue-500 border-blue-600 text-white hover:bg-blue-600' => $status === 'selected',
+                                                    'opacity-50 cursor-wait' => false,
                                                 ])
                                                 title="{{ $seat->sector }} - Ряд {{ $seat->row_num }} - Место {{ $seat->seat_number }} - {{ number_format($seatInstance->price, 2) }} ₽"
                                             >
-                                                {{ $seat->seat_number }}
+                                                <span wire:loading.remove wire:target="toggleSeat('{{ $seatInstanceId }}')">{{ $seat->seat_number }}</span>
+                                                <span wire:loading wire:target="toggleSeat('{{ $seatInstanceId }}')" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                                             </button>
                                         @endif
                                     @else
@@ -92,9 +96,11 @@
                 <button
                     type="button"
                     wire:click="closeSeatModal"
-                    class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                    wire:loading.attr="disabled"
+                    class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
-                    Закрыть
+                    <span wire:loading.remove wire:target="closeSeatModal">Закрыть</span>
+                    <span wire:loading wire:target="closeSeatModal">Закрытие...</span>
                 </button>
             </div>
         </div>

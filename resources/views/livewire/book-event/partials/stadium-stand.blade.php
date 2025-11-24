@@ -14,7 +14,16 @@
     <text x="{{ $labelX }}" y="{{ $labelY }}" text-anchor="middle" class="text-xs font-bold fill-gray-700" style="font-size: 11px;">{{ $standName }}</text>
     @foreach($sectors as $idx => $sectorName)
         @php
-            $sectorData = $seatsBySectorGrouped[$sectorName] ?? null;
+            $sectorData = null;
+            if (isset($seatsBySectorGrouped) && $seatsBySectorGrouped) {
+                if (is_array($seatsBySectorGrouped)) {
+                    $sectorData = $seatsBySectorGrouped[$sectorName] ?? null;
+                } elseif (is_object($seatsBySectorGrouped) && method_exists($seatsBySectorGrouped, 'get')) {
+                    $sectorData = $seatsBySectorGrouped->get($sectorName);
+                } elseif (is_object($seatsBySectorGrouped) && isset($seatsBySectorGrouped->$sectorName)) {
+                    $sectorData = $seatsBySectorGrouped->$sectorName;
+                }
+            }
             $hasSeats = $sectorData && isset($sectorData['total_seats']) && $sectorData['total_seats'] > 0;
             $hasAvailable = $sectorData && isset($sectorData['available']) && $sectorData['available'] > 0;
             $isFiltered = $priceFilter && $sectorData && (
@@ -69,11 +78,19 @@
             @endif
             
             <!-- Места в секторе -->
-            @if(isset($seatsBySector[$sectorName]))
+            @if(isset($seatsBySector[$sectorName]) && $seatsBySector[$sectorName])
                 @php
                     $rowsInSector = $seatsBySector[$sectorName];
-                    $maxSeatsPerRow = $rowsInSector->map(function($row) { return $row->count(); })->max() ?? 10;
-                    $maxRows = $rowsInSector->count();
+                    // Проверяем, что это коллекция или массив
+                    if (is_object($rowsInSector) && method_exists($rowsInSector, 'map')) {
+                        $maxSeatsPerRow = $rowsInSector->map(function($row) { 
+                            return is_countable($row) ? count($row) : (is_array($row) ? count($row) : 0); 
+                        })->max() ?? 10;
+                        $maxRows = $rowsInSector->count();
+                    } else {
+                        $maxSeatsPerRow = 10;
+                        $maxRows = is_countable($rowsInSector) ? count($rowsInSector) : 0;
+                    }
                     $seatSize = min(
                         ($sectorWidth - 10) / max($maxSeatsPerRow, 1),
                         ($sectorHeight - 25) / max($maxRows, 1),
@@ -84,7 +101,12 @@
                 @endphp
                 @foreach($rowsInSector as $rowNum => $seatsInRow)
                     @php
-                        $seatsInRowSorted = $seatsInRow->sortBy('seat_number')->values();
+                        // Проверяем, что это коллекция
+                        if (is_object($seatsInRow) && method_exists($seatsInRow, 'sortBy')) {
+                            $seatsInRowSorted = $seatsInRow->sortBy('seat_number')->values();
+                        } else {
+                            $seatsInRowSorted = collect(is_array($seatsInRow) ? $seatsInRow : []);
+                        }
                         if ($isHorizontal) {
                             $rowY = $sectorY + 20 + (($rowNum - 1) * ($seatSize + $seatSpacing) * 2);
                             $rowStartX = $sectorX + $padding + (($sectorWidth - ($seatsInRowSorted->count() * ($seatSize + $seatSpacing))) / 2);

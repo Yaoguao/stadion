@@ -89,6 +89,7 @@ class BookingRepository extends BaseRepository implements BookingRepositoryInter
 
             foreach ($itemsData as $itemData) {
                 $itemData['booking_id'] = $booking->id;
+                $itemData['created_at'] = now();
                 BookingItem::create($itemData);
             }
 

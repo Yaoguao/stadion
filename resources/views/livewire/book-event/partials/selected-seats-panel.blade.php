@@ -1,11 +1,13 @@
 <div class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
     <h2 class="text-xl font-semibold text-gray-900 mb-4">Выбранные места</h2>
     
-    @if(count($selectedSeats) > 0)
+    @if(isset($selectedSeats) && is_array($selectedSeats) && count($selectedSeats) > 0)
         <div class="space-y-3 mb-6 max-h-96 overflow-y-auto">
             @foreach($selectedSeats as $seatInstanceId)
                 @php
-                    $seatInstance = $seatInstances[$seatInstanceId] ?? null;
+                    $seatInstance = isset($seatInstances) && is_array($seatInstances) 
+                        ? ($seatInstances[$seatInstanceId] ?? null) 
+                        : null;
                 @endphp
                 @if($seatInstance && $seatInstance->seat)
                     <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">

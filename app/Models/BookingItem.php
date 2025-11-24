@@ -13,6 +13,13 @@ class BookingItem extends Model
     use HasFactory, HasUuids;
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
@@ -34,7 +41,6 @@ class BookingItem extends Model
         return [
             'price' => 'decimal:2',
             'fee' => 'decimal:2',
-            'created_at' => 'datetime',
         ];
     }
 
